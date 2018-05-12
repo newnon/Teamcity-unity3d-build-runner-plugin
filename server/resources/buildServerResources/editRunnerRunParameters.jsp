@@ -32,6 +32,20 @@
     </td>
 </tr>
 
+
+<tr>
+    <th>
+        <label for="unity.serial">Unity Serial: </label>
+    </th>
+    <td>
+        <props:textProperty name="unity.serial" style="width:32em;"/>
+        <span class="error" id="error_unity.serial"></span>
+        <span class="smallNote">
+             Optional, specify to provide Unity with a serial number to automatically manage licenses.
+        </span>
+    </td>
+</tr>
+
 <tr>
     <th>
         <label for="teamcity.build.workingDir">Working Directory: </label>

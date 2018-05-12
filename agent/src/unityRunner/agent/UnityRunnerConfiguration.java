@@ -27,6 +27,7 @@ public class UnityRunnerConfiguration {
     }
 
     final String unityExecutablePath;
+    final String unitySerial;
     final boolean quit;
     final boolean batchMode;
     final boolean noGraphics;
@@ -77,6 +78,8 @@ public class UnityRunnerConfiguration {
         unityExecutablePath = FilenameUtils.separatorsToSystem(
                 Parameters.getString(runnerParameters, PluginConstants.PROPERTY_UNITY_EXECUTABLE_PATH));
 
+        unitySerial = Parameters.getString(runnerParameters, PluginConstants.PROPERTY_UNITY_SERIAL);
+
         unityVersion = Parameters.getString(runnerParameters, PluginConstants.PROPERTY_UNITY_VERSION);
         if (isSet(unityVersion)) {
             // look up the path to the specified unity version in Agent Configuration Parameters
@@ -111,7 +114,6 @@ public class UnityRunnerConfiguration {
 
         ignoreLogBefore = Parameters.getBoolean(runnerParameters, PluginConstants.PROPERTY_LOG_IGNORE);
         ignoreLogBeforeText = Parameters.getString(runnerParameters, PluginConstants.PROPERTY_LOG_IGNORE_TEXT);
-
     }
 
 

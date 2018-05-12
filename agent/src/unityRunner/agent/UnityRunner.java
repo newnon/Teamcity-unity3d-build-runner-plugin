@@ -57,6 +57,11 @@ public class UnityRunner {
         if (configuration.quit)
             args.add("-quit");
 
+        if (!configuration.unitySerial.equals("")) {
+            args.add("-serial");
+            args.add(configuration.unitySerial);
+        }
+
         if (!configuration.buildPlayer.equals("")) {
             args.add(String.format("-%s", configuration.buildPlayer));
             args.add(String.format("%s", configuration.buildPath));
