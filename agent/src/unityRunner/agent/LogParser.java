@@ -113,6 +113,11 @@ public class LogParser {
             }
         }
 
+        // Don't log empty lines.
+        if(message != null && !message.isEmpty()) {
+            return;
+        }
+
         // There is not match. Just log a regular message.
         log(message, Line.Type.Normal);
     }
