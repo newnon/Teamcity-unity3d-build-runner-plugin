@@ -12,9 +12,15 @@ import org.apache.commons.io.input.TailerListenerAdapter;
 
 public class TailerListener extends TailerListenerAdapter {
     private final UnityRunner runner;
+    private boolean stillIgnoringLines;
+    private boolean ignoreLogBefore;
+    private String ignoreLogBeforeText;
 
-    public TailerListener(UnityRunner runner) {
+    public TailerListener(UnityRunner runner, boolean ignoreLogBefore, String ignoreLogBeforeText) {
         this.runner = runner;
+        this.ignoreLogBefore = ignoreLogBefore;
+        this.ignoreLogBeforeText = ignoreLogBeforeText;
+        this.stillIgnoringLines = ignoreLogBefore;
         workAroundTailerBug = false;
     }
     
@@ -22,9 +28,29 @@ public class TailerListener extends TailerListenerAdapter {
     private int lineCount;
     private boolean workAroundTailerBug;
     private int skipLineCount;
+    private Boolean hasFirstLogFired = false;
 
     @Override
-    public void handle(String line) {        
+    public void handle(String line) {
+        if(!hasFirstLogFired) {
+            hasFirstLogFired = true;
+
+            if (ignoreLogBefore) {
+                runner.logMessage("[Ignoring lines before text " + ignoreLogBeforeText +"]");
+                runner.logMessage("##teamcity[blockOpened name='ignoredLines']");
+            }
+        }
+
+        if (stillIgnoringLines && line.contentEquals(ignoreLogBeforeText)){
+            stillIgnoringLines = false;
+            runner.logMessage("##teamcity[blockClosed name='ignoredLines']");
+        }
+
+        if(stillIgnoringLines) {
+            runner.logMessage(line);
+            return;
+        }
+
         lineCount++;
                
         if (workAroundTailerBug) {

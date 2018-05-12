@@ -29,7 +29,6 @@ public class UnityRunner {
         this.logParser = logParser;
     }
 
-
     /**
      * @return executable name/path
      */
@@ -111,68 +110,15 @@ public class UnityRunner {
      */
     private void tailLogFile() {
         initialise();
+
         logMessage("[tailing log file: " + configuration.getInterestedLogPath() + "]");
 
         File file = new File(configuration.getInterestedLogPath());
-        listener = new TailerListener(this);
-        tailer = new Tailer(file, listener, 500);
+        listener = new TailerListener(this, configuration.ignoreLogBefore, configuration.ignoreLogBeforeText);
+        tailer = new Tailer(file, listener, 1000);
 
         runnerThread = new Thread(tailer);
         runnerThread.start();
-    }
-
-    /**
-     * cat the log file instead of tailing it
-     */
-    private void catLogFile() {
-        logMessage("[Catting log file]");
-        if (configuration.ignoreLogBefore) {
-            logMessage("[Ignoring lines before text "+configuration.ignoreLogBeforeText +"]");
-        }
-
-        String interestedLogPath = configuration.getInterestedLogPath();
-
-        logMessage("[InterestedLogPath] " + interestedLogPath);
-
-        File file = new File(interestedLogPath);
-
-        // for each line
-        try {
-            LineIterator iterator = FileUtils.lineIterator(file);
-            List<String> ignoredLines = new ArrayList<String>();
-            boolean stillIgnoringLines = configuration.ignoreLogBefore;
-            try {
-                while (iterator.hasNext()) {
-                    String line = iterator.nextLine();
-                    if (stillIgnoringLines && line.contentEquals(configuration.ignoreLogBeforeText)){
-                        stillIgnoringLines = false;
-                    }
-
-                    if (line.length() > 0) {
-                        if ( stillIgnoringLines ) {
-                            // add the message to the ignored group
-                            ignoredLines.add(line);
-                        } else {
-                            // log the message
-                            logMessage(line);
-                        }
-                    }
-                }
-                if (stillIgnoringLines) {
-                    // we have finished processing the log and we've ignored everything
-                    logMessage("[The configured text has not been found: "+configuration.ignoreLogBeforeText +"]");
-                    // we better output all these lines
-                    logMessages(ignoredLines);
-                }
-            } finally {
-                iterator.close();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-
     }
 
     private void logMessages(List<String> lines) {
@@ -185,16 +131,11 @@ public class UnityRunner {
      * stop the runner
      */
     public void stop() {
-//        catLogFile();
-
         tailer.stop();
 
         logMessage("[log tail process end]");
-
         logMessage("[Stop UnityRunner]");
-
     }
-
 
     /**
      * cleanup after runner
@@ -204,7 +145,6 @@ public class UnityRunner {
             cleanAfter();
         }
     }
-
 
     private void initialise() {
         deleteLogFile(configuration.getInterestedLogPath());
@@ -259,7 +199,6 @@ public class UnityRunner {
     private void cleanAfter() {
         new OutputDirectoryCleaner(logParser).clean(new File(configuration.buildPath));
     }
-
 }
 
 

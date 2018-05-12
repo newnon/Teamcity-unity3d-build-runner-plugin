@@ -154,18 +154,11 @@ public class LogParser {
         errorCount++;
         final Writer stackTrace = new StringWriter();
         e.printStackTrace(new PrintWriter(stackTrace));
-
         log("Exception: " + stackTrace.toString(), Line.Type.Failure);
     }
 
     private Timestamp getTimestamp() {
         java.util.Date date = new java.util.Date();
         return new Timestamp(date.getTime());
-    }
-
-    public void logCompilationFailure() {
-        if(errorCount > 0) {
-            logger.buildFailureDescription(errorCount + " compilation errors");
-        }
     }
 }
