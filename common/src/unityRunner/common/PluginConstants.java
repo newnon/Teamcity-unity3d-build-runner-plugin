@@ -34,6 +34,7 @@ public interface PluginConstants {
 
     final String REPORT_TAB_CODE = "unityReportTab";
 
+    final String CONFIGPARAM_UNITY_TOOL_BASE_VERSION = "teamcity.tool.";
     final String CONFIGPARAM_UNITY_BASE_VERSION = "unity.";
     final String CONFIGPARAM_UNITY_LOG_PATH = "unity.log";
     final String CONFIGPARAM_UNITY_LATEST_VERSION = "unity.latest";
