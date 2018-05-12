@@ -108,18 +108,17 @@ public class LogParser {
         // Now check message
         for (Line line : UnityLineListParser.lines) {
             if (line.matches(message)) {
-                log(message, line.getType());
+                if(message != null && !message.isEmpty()) {
+                    log(message, line.getType());
+                }
                 return;
             }
         }
 
         // Don't log empty lines.
         if(message != null && !message.isEmpty()) {
-            return;
+            log(message, Line.Type.Normal);
         }
-
-        // There is not match. Just log a regular message.
-        log(message, Line.Type.Normal);
     }
 
     private void log(String message, Line.Type type) {
