@@ -33,9 +33,9 @@ public class UnityLineListParser {
                     // Infos
                     new Line("There are inconsistent line endings in the.*?", Line.Type.Normal),
                     new Line("This might lead to incorrect line numbers in stacktraces and compiler errors.*?", Line.Type.Normal),
+                    new Line("Script attached to.*?is missing or no valid script is attached.", Line.Type.Normal),
 
                     // Warnings
-                    new Line("Script attached to.*?is missing or no valid script is attached.", Line.Type.Warning),
                     new Line(".*?warning CS\\d+.*?", Line.Type.Warning),
                     new Line("WARNING.*", Line.Type.Warning),
 
