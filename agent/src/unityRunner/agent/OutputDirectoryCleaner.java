@@ -52,7 +52,6 @@ public class OutputDirectoryCleaner extends DirectoryWalker {
         } else {
             return true;
         }
-
     }
 
     protected void handleFile(File file, int depth, Collection results) {

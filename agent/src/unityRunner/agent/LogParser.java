@@ -108,6 +108,12 @@ public class LogParser {
         // Now check message
         for (Line line : UnityLineListParser.lines) {
             if (line.matches(message)) {
+                for(Line ignoredLine : UnityLineListParser.ignoredLines) {
+                    if(ignoredLine.matches(message)) {
+                        return;
+                    }
+                }
+
                 if(message != null && !message.isEmpty()) {
                     log(message, line.getType());
                 }
@@ -145,6 +151,10 @@ public class LogParser {
             default:
                 status = Status.NORMAL;
                 break;
+        }
+
+        if(status == Status.ERROR) {
+            status = Status.FAILURE;
         }
 
         logger.logMessage(new BuildMessage1("DefaultMessage", "Text", status, getTimestamp(), message));

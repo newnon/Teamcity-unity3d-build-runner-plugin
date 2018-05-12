@@ -25,8 +25,15 @@ import java.io.File;
  */
 public class UnityLineListParser {
     public static List<Line> lines = new ArrayList<Line>();
+    public static List<Line> ignoredLines = new ArrayList<Line>();
 
     public static void ParseLines(java.io.File lineListFile) {
+        if(ignoredLines.isEmpty()) {
+            ignoredLines = Arrays.asList(
+                    new Line("Assertion failed: Failed to insert item. Name:.*?, Command:.*", Line.Type.Normal)
+            );
+        }
+
         if(!lineListFile.exists())
         {
             lines = Arrays.asList(
