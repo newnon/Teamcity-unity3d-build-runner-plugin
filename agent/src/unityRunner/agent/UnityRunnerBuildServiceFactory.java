@@ -102,6 +102,13 @@ public class UnityRunnerBuildServiceFactory implements CommandLineBuildServiceFa
                     findUnityVersionsIn(location, platform, foundUnityVersions);
                 }
 
+                Loggers.AGENT.info("Checking for unity hub versions on disk");
+                for(String location : UnityRunnerConfiguration.getPossibleUnityHubLocations(platform)) {
+                    Loggers.AGENT.info("Looking for Unity hub Installations at : " + location);
+                    //  search for <location>/* folders
+                    findUnityHubVersionsIn(location, platform, foundUnityVersions);
+                }
+
                 // Add the agent tools versions
                 Loggers.AGENT.info("Looking for Unity Installations in tools directory : " + agentConfiguration.getAgentToolsDirectory());
                 findUnityVersionsIn(agentConfiguration.getAgentToolsDirectory().getAbsolutePath(), platform, foundUnityVersions);
@@ -160,6 +167,34 @@ public class UnityRunnerBuildServiceFactory implements CommandLineBuildServiceFa
                 // NOTE: java nio 2 requires java 7 and above
                 Path path = FileSystems.getDefault().getPath(location);
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "Unity*")) {
+                    for (Path entry: stream) {
+                        if (platform ==  UnityRunnerConfiguration.Platform.Mac) {
+                            findMacUnityVersion(entry, foundUnityVersions);
+                        } else if (platform == UnityRunnerConfiguration.Platform.Windows) {
+                            findWindowsUnityVersion(entry, foundUnityVersions);
+                        }
+                    }
+                } catch (IOException e) {
+                    // IOException can never be thrown by the iteration.
+                    // In this snippet, it can // only be thrown by newDirectoryStream.
+                    Loggers.AGENT.error("Exception getting finding unity versions :" + e.getMessage());
+                }
+            }
+
+            /**
+             * detect if unity is installed in this location
+             * @param location location to test
+             * @param platform current platform
+             * @param foundUnityVersions map to add discovered unity versions to
+             */
+            private void findUnityHubVersionsIn(
+                    String location,
+                    UnityRunnerConfiguration.Platform platform,
+                    Map<String,String> foundUnityVersions) {
+
+                // NOTE: java nio 2 requires java 7 and above
+                Path path = FileSystems.getDefault().getPath(location);
+                try (DirectoryStream<Path> stream = Files.newDirectoryStream(path, "*")) {
                     for (Path entry: stream) {
                         if (platform ==  UnityRunnerConfiguration.Platform.Mac) {
                             findMacUnityVersion(entry, foundUnityVersions);

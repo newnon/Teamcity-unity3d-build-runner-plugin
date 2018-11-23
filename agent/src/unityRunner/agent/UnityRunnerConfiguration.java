@@ -221,6 +221,31 @@ public class UnityRunnerConfiguration {
         return locations;
     }
 
+    /**
+     * get list of possible unity hub locations e.g /Applications or "\Program Files"
+     * @param platform current platform
+     * @return list of locations - may be empty
+     */
+    static List<String> getPossibleUnityHubLocations(Platform platform) {
+        List<String> locations = new ArrayList<>(2);
+
+        switch (platform) {
+            case Windows:
+                // on Windows we have potentially two locations for 32 and 64 bit apps
+                addLocation(System.getenv("ProgramFiles") + "\\Unity\\Hub\\Editor", locations);
+                addLocation(System.getenv("ProgramFiles(x86)") + "\\Unity\\Hub\\Editor", locations);
+
+                // When running a 32 bit instance of a JVM under a 64 bit version of windows, from
+                // windows 10. We should also use the following environment variable, the previous two
+                // will all resolve to the same location. Either losing Program Files or Program Files (x86)
+                addLocation(System.getenv("ProgramW6432") + "\\Unity\\Hub\\Editor", locations);
+            case Mac:
+                // on Mac there is only one location for apps.
+                addLocation("/Applications" + "/Unity/Hub/Editor", locations);
+        }
+
+        return locations;
+    }
 
     /**
      * test if string is set to a value
